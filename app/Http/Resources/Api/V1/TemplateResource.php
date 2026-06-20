@@ -17,6 +17,9 @@ class TemplateResource extends JsonResource
             'price' => $this->price,
             'sale_price' => $this->sale_price,
             'demo_url' => $this->demo_url,
+            'live_demo_url' => $this->live_demo_url,
+            'live_demo_link' => $this->live_demo_link,
+            'screenshot_url' => $this->live_demo_link ? screenshot_url($this->live_demo_link) : null,
             'preview_image' => $this->preview_image,
             'is_featured' => $this->is_featured,
             'category' => $this->whenLoaded('category', fn () => [

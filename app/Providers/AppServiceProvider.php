@@ -16,6 +16,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(\App\Services\Settings\SiteSettingsService::class);
+
+        if ($publicPath = env('APP_PUBLIC_PATH')) {
+            $this->app->usePublicPath($publicPath);
+        }
     }
 
     public function boot(): void
@@ -24,10 +28,16 @@ class AppServiceProvider extends ServiceProvider
             try {
                 $request = request();
 
-                if ($request->hasHeader('Host')) {
+                // Lokal / LAN: URL mengikuti host request (mis. akses via IP HP).
+                if ($this->app->environment('local') && $request->hasHeader('Host')) {
                     \Illuminate\Support\Facades\URL::forceRootUrl(
                         $request->getSchemeAndHttpHost().$request->getBaseUrl()
                     );
+                }
+
+                // Production: paksa HTTPS jika koneksi aman (SSL / reverse proxy).
+                if ($this->app->environment('production') && $request->isSecure()) {
+                    \Illuminate\Support\Facades\URL::forceScheme('https');
                 }
             } catch (\Throwable) {
                 // Request may be unavailable during early bootstrap.

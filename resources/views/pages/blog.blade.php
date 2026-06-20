@@ -26,7 +26,7 @@
                     <article class="flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <div class="relative h-44 overflow-hidden bg-gradient-to-br from-brand-primary/15 via-brand-secondary/10 to-brand-accent/10">
                             @if($post->featured_image)
-                                <img src="{{ asset('storage/'.$post->featured_image) }}" alt="{{ $post->title }}" class="h-full w-full object-cover">
+                                <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="h-full w-full object-cover">
                             @endif
                         </div>
                         <div class="flex flex-1 flex-col p-6">

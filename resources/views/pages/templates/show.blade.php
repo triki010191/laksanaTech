@@ -5,12 +5,8 @@
     <a href="{{ route('designs') }}" class="text-link">← Kembali ke Cari Design</a>
 
     <div class="mt-6 grid gap-8 lg:grid-cols-2">
-        <div>
-            @if($template->preview_image)
-                <img src="{{ asset('storage/'.$template->preview_image) }}" alt="{{ $template->name }}" class="w-full rounded-3xl border object-cover">
-            @else
-                <div class="aspect-[4/3] rounded-3xl bg-gradient-to-br from-brand-primary/15 to-brand-secondary/15"></div>
-            @endif
+        <div class="overflow-hidden rounded-3xl border">
+            <x-template-preview :template="$template" wrapper-class="aspect-[4/3]" :linkable="false" />
         </div>
         <div>
             <p class="text-eyebrow">{{ $template->category->name ?? 'Website' }}</p>
@@ -28,8 +24,8 @@
             <div class="mt-8 flex flex-wrap gap-3">
                 <a href="{{ route('checkout', ['flow' => 'template_first', 'template' => $template->id]) }}"
                    class="rounded-2xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white">Pesan Template Ini</a>
-                @if($template->demo_url)
-                    <a href="{{ $template->demo_url }}" target="_blank" rel="noopener"
+                @if($template->live_demo_link)
+                    <a href="{{ $template->live_demo_link }}" target="_blank" rel="noopener noreferrer"
                        class="rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700">Lihat Demo</a>
                 @endif
             </div>

@@ -1,10 +1,13 @@
-<div>
+<div
+    x-data
+    @scroll-to-form.window="$nextTick(() => document.getElementById('user-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))"
+>
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
             <h1 class="font-display text-2xl font-bold text-slate-900">Kelola Pengguna</h1>
             <p class="mt-1 text-sm text-slate-500">Tambah admin, karyawan, sales, dan admin transaksi</p>
         </div>
-        <button wire:click="create" class="admin-btn admin-btn--primary inline-flex rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white">+ Tambah Pengguna</button>
+        <button type="button" wire:click="create" class="admin-btn admin-btn--primary inline-flex rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white">+ Tambah Pengguna</button>
     </div>
 
     <div class="mt-4 flex flex-wrap gap-2">
@@ -17,8 +20,11 @@
     </div>
 
     @if($showForm)
-        <form wire:submit="save" class="admin-form admin-panel mt-6 space-y-4">
+        <form id="user-form" wire:submit="save" class="admin-form admin-panel mt-6 scroll-mt-6 space-y-4 ring-2 ring-brand-primary/30">
             <h2 class="admin-form-section__title">{{ $editingId ? 'Edit Pengguna' : 'Pengguna Baru' }}</h2>
+            @if($editingId)
+                <p class="text-sm text-slate-600">Isi <strong>Password</strong> di bawah jika ingin mengganti password login.</p>
+            @endif
             <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                     <label class="admin-label">Nama *</label>
@@ -86,9 +92,9 @@
                         </td>
                         <td class="px-4 py-3 capitalize">{{ $user->status->value ?? $user->status }}</td>
                         <td class="px-4 py-3 text-right">
-                            <button wire:click="edit({{ $user->id }})" class="admin-btn admin-btn--primary admin-btn--sm inline-flex rounded-lg bg-brand-primary px-3 py-1.5 text-xs font-semibold text-white">Edit</button>
+                            <button type="button" wire:click="edit({{ $user->id }})" wire:loading.attr="disabled" wire:target="edit({{ $user->id }})" class="admin-btn admin-btn--primary admin-btn--sm inline-flex rounded-lg bg-brand-primary px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">Edit</button>
                             @if($user->id !== auth()->id())
-                                <button wire:click="delete({{ $user->id }})" wire:confirm="Hapus pengguna ini?" class="admin-btn admin-btn--danger admin-btn--sm ml-1 inline-flex rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white">Hapus</button>
+                                <button type="button" wire:click="delete({{ $user->id }})" wire:confirm="Hapus pengguna ini?" class="admin-btn admin-btn--danger admin-btn--sm ml-1 inline-flex rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white">Hapus</button>
                             @endif
                         </td>
                     </tr>

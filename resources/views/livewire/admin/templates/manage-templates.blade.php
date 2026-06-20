@@ -42,13 +42,19 @@
                 </div>
             </div>
             <div class="mt-4">
-                <label class="admin-label">URL Demo</label>
+                <label class="admin-label">URL Demo Live (ThemeForest / Envato)</label>
+                <input wire:model="live_demo_url" type="url" class="admin-input" placeholder="https://preview.themeforest.net/item/...">
+                <p class="mt-1 text-xs text-slate-500">Thumbnail otomatis diambil dari URL ini. Klik kartu / Lihat Demo membuka tab baru.</p>
+            </div>
+            <div class="mt-4">
+                <label class="admin-label">URL Demo (legacy, opsional)</label>
                 <input wire:model="demo_url" class="admin-input">
             </div>
             <div class="admin-form-upload mt-4">
                 @if($currentPreviewUrl)<img src="{{ $currentPreviewUrl }}" class="mb-3 max-h-36 rounded-xl">@endif
-                <label class="admin-label">Preview image</label>
+                <label class="admin-label">Preview image (fallback manual)</label>
                 <input wire:model="preview_image" type="file" accept="image/*" class="admin-input admin-input--file">
+                <p class="mt-1 text-xs text-slate-500">Digunakan jika screenshot API gagal dimuat.</p>
             </div>
             <div class="mt-4 flex flex-wrap gap-4">
                 <label class="flex items-center gap-2 text-sm"><input type="checkbox" wire:model="is_featured" class="rounded"> Unggulan</label>

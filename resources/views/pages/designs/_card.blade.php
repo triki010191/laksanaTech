@@ -1,16 +1,18 @@
 <article class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:shadow-md">
-    <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
-        @if($template->preview_image)
-            <img src="{{ asset('storage/'.$template->preview_image) }}" alt="{{ $template->name }}" class="h-full w-full object-cover object-top">
-        @else
-            <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10">
-                <span class="text-meta text-brand-primary">{{ $template->category->name ?? 'Website' }}</span>
-            </div>
-        @endif
+    <div class="relative aspect-[4/3] overflow-hidden">
+        <x-template-preview :template="$template" class="h-full w-full" />
     </div>
 
     <div class="p-4">
-        <h3 class="text-card-title line-clamp-2">{{ $template->name }}</h3>
+        @if($template->live_demo_link)
+            <a href="{{ $template->live_demo_link }}" target="_blank" rel="noopener noreferrer"
+               class="text-card-title line-clamp-2 transition hover:text-brand-primary">
+                {{ $template->name }}
+            </a>
+        @else
+            <h3 class="text-card-title line-clamp-2">{{ $template->name }}</h3>
+        @endif
+
         <p class="text-caption mt-1.5">
             @if($template->downloads_count > 0)
                 {{ number_format($template->downloads_count, 0, ',', '.') }} orang memilih ini
@@ -20,11 +22,11 @@
         </p>
 
         <div class="mt-4 flex gap-2">
-            @if($template->demo_url)
-                <a href="{{ $template->demo_url }}" target="_blank" rel="noopener"
+            @if($template->live_demo_link)
+                <a href="{{ $template->live_demo_link }}" target="_blank" rel="noopener noreferrer"
                    class="text-btn inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-heading transition hover:border-slate-300 hover:bg-slate-50">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    Lihat
+                    Lihat Demo
                 </a>
             @else
                 <a href="{{ route('templates.show', $template->slug) }}"

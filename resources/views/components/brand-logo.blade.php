@@ -9,7 +9,7 @@
     $customLogo = $site['brand_logo_path'] ?? '';
 
     if ($customLogo) {
-        $logoPath = asset('storage/'.$customLogo);
+        $logoPath = upload_url($customLogo);
     } else {
         $logoPath = asset(config('laksana.brand.logos.main'));
     }

@@ -38,6 +38,8 @@ class ManageTemplates extends Component
 
     public ?string $demo_url = null;
 
+    public ?string $live_demo_url = null;
+
     public bool $is_featured = false;
 
     public bool $is_active = true;
@@ -64,9 +66,10 @@ class ManageTemplates extends Component
         $this->price = (string) $t->price;
         $this->sale_price = $t->sale_price ? (string) $t->sale_price : '';
         $this->demo_url = $t->demo_url;
+        $this->live_demo_url = $t->live_demo_url;
         $this->is_featured = $t->is_featured;
         $this->is_active = $t->is_active;
-        $this->currentPreviewUrl = $t->preview_image ? asset('storage/'.$t->preview_image) : null;
+        $this->currentPreviewUrl = $t->preview_image ? upload_url($t->preview_image) : null;
         $this->preview_image = null;
         $this->showForm = true;
     }
@@ -78,6 +81,7 @@ class ManageTemplates extends Component
             'template_category_id' => 'required|exists:template_categories,id',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
+            'live_demo_url' => 'nullable|url|max:500',
             'preview_image' => 'nullable|image|max:4096',
         ]);
 
@@ -90,6 +94,7 @@ class ManageTemplates extends Component
             'price' => $this->price,
             'sale_price' => $this->sale_price ?: null,
             'demo_url' => $this->demo_url,
+            'live_demo_url' => $this->live_demo_url,
             'is_featured' => $this->is_featured,
             'is_active' => $this->is_active,
         ];
@@ -127,7 +132,7 @@ class ManageTemplates extends Component
     {
         $this->reset([
             'editingId', 'name', 'slug', 'template_category_id', 'short_description',
-            'description', 'price', 'sale_price', 'demo_url', 'is_featured', 'is_active',
+            'description', 'price', 'sale_price', 'demo_url', 'live_demo_url', 'is_featured', 'is_active',
             'preview_image', 'currentPreviewUrl',
         ]);
         $this->is_active = true;

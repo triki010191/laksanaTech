@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSeo;
+use App\Support\LiveScreenshotUrl;
 use App\Traits\HasPublicUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,12 +52,48 @@ class Portfolio extends Model
         return $this->hasMany(PortfolioImage::class)->orderBy('sort_order');
     }
 
-    public function getCoverImageUrlAttribute(): ?string
+    public function isWebsiteProject(): bool
+    {
+        return $this->category?->slug === 'website';
+    }
+
+    /** URL live untuk kategori Website (screenshot otomatis). */
+    public function getLiveDemoLinkAttribute(): ?string
+    {
+        return $this->isWebsiteProject() && $this->project_url
+            ? $this->project_url
+            : null;
+    }
+
+    public function getManualCoverImageUrlAttribute(): ?string
     {
         $image = $this->relationLoaded('images')
             ? $this->images->first()
             : $this->images()->orderBy('sort_order')->first();
 
-        return $image?->url;
+        return $image?->url ?: null;
+    }
+
+    /** Sumber thumbnail: screenshot proxy → foto manual. */
+    public function getThumbnailSourcesAttribute(): array
+    {
+        $sources = [];
+
+        if ($link = $this->live_demo_link) {
+            $sources[] = LiveScreenshotUrl::proxy($link);
+        }
+
+        if ($manual = $this->manual_cover_image_url) {
+            $sources[] = $manual;
+        }
+
+        return $sources;
+    }
+
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        $sources = $this->thumbnail_sources;
+
+        return $sources[0] ?? null;
     }
 }

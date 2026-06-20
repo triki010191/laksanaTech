@@ -25,7 +25,7 @@
 
         @if($post->featured_image)
             <div class="mt-8 overflow-hidden rounded-3xl border border-slate-100 shadow-sm">
-                <img src="{{ asset('storage/'.$post->featured_image) }}" alt="{{ $post->title }}" class="w-full object-cover">
+                <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full object-cover">
             </div>
         @endif
 

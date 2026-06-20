@@ -5,11 +5,10 @@
     @if($this->selectedTemplate)
         <div class="checkout-selected-template mt-6">
             <div class="flex gap-4">
-                @if($this->selectedTemplate->preview_image)
-                    <img src="{{ asset('storage/'.$this->selectedTemplate->preview_image) }}" alt="" class="h-20 w-28 rounded-lg object-cover object-top">
-                @else
-                    <div class="h-20 w-28 rounded-lg bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10"></div>
-                @endif
+                <div class="h-20 w-28 shrink-0 overflow-hidden rounded-lg">
+                    <x-template-preview :template="$this->selectedTemplate" :linkable="false"
+                                        img-class="h-20 w-28 object-cover object-top" />
+                </div>
                 <div class="min-w-0 flex-1">
                     <p class="text-card-title">{{ $this->selectedTemplate->name }}</p>
                     <p class="text-caption mt-1">{{ number_format($this->selectedTemplate->downloads_count, 0, ',', '.') }} orang memilih ini</p>
@@ -32,14 +31,17 @@
                 'checkout-template-card--selected' => $templateId === $tpl->id,
             ])>
                 <input type="radio" wire:model.live="templateId" value="{{ $tpl->id }}" class="sr-only">
-                @if($tpl->preview_image)
-                    <img src="{{ asset('storage/'.$tpl->preview_image) }}" alt="" class="checkout-template-card__img">
-                @else
-                    <div class="checkout-template-card__img bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10"></div>
-                @endif
+                <x-template-preview :template="$tpl" :linkable="false"
+                                    wrapper-class="checkout-template-card__img"
+                                    img-class="checkout-template-card__img h-full w-full object-cover object-top" />
                 <div class="p-3">
                     <p class="text-card-title text-sm line-clamp-2">{{ $tpl->name }}</p>
                     <p class="text-price mt-1 text-xs">Rp {{ number_format($tpl->sale_price ?? $tpl->price, 0, ',', '.') }}</p>
+                    @if($tpl->live_demo_link)
+                        <a href="{{ $tpl->live_demo_link }}" target="_blank" rel="noopener noreferrer"
+                           class="text-caption mt-1 inline-block text-brand-primary hover:underline"
+                           onclick="event.stopPropagation()">Lihat Demo ↗</a>
+                    @endif
                 </div>
             </label>
         @endforeach

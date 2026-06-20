@@ -10,13 +10,16 @@
     </div>
 
     @if($showForm)
+        @php
+            $isWebsite = (int) $portfolio_category_id === (int) $websiteCategoryId;
+        @endphp
         <form wire:submit="save" class="mt-6 space-y-4 rounded-2xl border bg-white p-6 shadow-sm">
             <h2 class="font-semibold">{{ $editingId ? 'Edit Proyek' : 'Proyek Baru' }}</h2>
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                     <label class="mb-1 block text-sm font-medium text-slate-700">Kategori *</label>
-                    <select wire:model="portfolio_category_id" class="admin-input">
+                    <select wire:model.live="portfolio_category_id" class="admin-input">
                         <option value="">— Pilih kategori —</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -50,8 +53,14 @@
                     @error('client_name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="mb-1 block text-sm font-medium text-slate-700">URL Proyek</label>
-                    <input wire:model="project_url" type="url" placeholder="https://..." class="admin-input">
+                    @if($isWebsite)
+                        <label class="mb-1 block text-sm font-medium text-slate-700">URL Live Website *</label>
+                        <input wire:model="project_url" type="url" placeholder="https://contoh.sch.id/" class="admin-input">
+                        <p class="mt-1 text-xs text-slate-500">Thumbnail otomatis dari screenshot website. Klik kartu membuka tab baru.</p>
+                    @else
+                        <label class="mb-1 block text-sm font-medium text-slate-700">URL Proyek (opsional)</label>
+                        <input wire:model="project_url" type="url" placeholder="https://..." class="admin-input">
+                    @endif
                     @error('project_url') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -83,7 +92,13 @@
             </div>
 
             <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4">
-                <label class="mb-2 block text-sm font-medium text-slate-700">Screenshot / Foto Proyek</label>
+                @if($isWebsite)
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Screenshot Fallback (opsional)</label>
+                    <p class="mb-3 text-xs text-slate-500">Kategori Website memakai screenshot otomatis dari URL live. Upload manual hanya sebagai cadangan jika screenshot gagal.</p>
+                @else
+                    <label class="mb-2 block text-sm font-medium text-slate-700">Screenshot / Foto Proyek</label>
+                    <p class="mb-3 text-xs text-slate-500">Untuk aplikasi desktop, POS, dan instalasi — upload foto/screenshot manual.</p>
+                @endif
 
                 @if($editingId && $editingImages->isNotEmpty())
                     <div class="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -140,13 +155,10 @@
     <div class="mt-6 space-y-4">
         @forelse($portfolios as $item)
             <div class="flex flex-col gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center">
-                @if($item->cover_image_url)
-                    <img src="{{ $item->cover_image_url }}" alt="{{ $item->title }}" class="h-24 w-40 flex-shrink-0 rounded-xl border bg-slate-50 object-cover object-top">
-                @else
-                    <div class="flex h-24 w-40 flex-shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 text-xs text-slate-500">
-                        Belum ada foto
-                    </div>
-                @endif
+                <div class="h-24 w-40 shrink-0 overflow-hidden rounded-xl border">
+                    <x-portfolio-preview :portfolio="$item" :linkable="false"
+                                         img-class="h-24 w-40 object-cover object-top" />
+                </div>
                 <div class="min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-2">
                         <span class="rounded-full bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary">
@@ -161,11 +173,21 @@
                         @else
                             <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Draft</span>
                         @endif
-                        <span class="text-xs text-slate-500">{{ $item->images->count() }} foto</span>
+                        @if($item->isWebsiteProject() && $item->project_url)
+                            <span class="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Live Preview</span>
+                        @else
+                            <span class="text-xs text-slate-500">{{ $item->images->count() }} foto</span>
+                        @endif
                     </div>
                     <p class="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500">{{ $item->client_name }}</p>
                     <p class="font-semibold text-slate-900">{{ $item->title }}</p>
                     <p class="mt-1 line-clamp-2 text-sm text-slate-600">{{ $item->short_description }}</p>
+                    @if($item->live_demo_link)
+                        <a href="{{ $item->live_demo_link }}" target="_blank" rel="noopener noreferrer"
+                           class="mt-2 inline-flex items-center gap-1 text-xs text-brand-primary hover:underline">
+                            Lihat Live ↗
+                        </a>
+                    @endif
                 </div>
                 <div class="flex gap-2 sm:flex-col">
                     <button wire:click="edit({{ $item->id }})" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-brand-primary hover:bg-slate-50">Edit</button>

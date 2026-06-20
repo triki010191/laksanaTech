@@ -33,6 +33,31 @@ docker compose up -d --build
 # App: http://localhost:8080
 ```
 
+## Hosting / Production
+
+Siap deploy ke shared hosting (cPanel) atau VPS:
+
+```bash
+# Instalasi pertama di server
+cp .env.production.example .env
+# Edit DB_*, APP_URL, mail, payment
+php artisan key:generate
+bash scripts/hosting-install.sh
+
+# Update setelah git pull
+bash scripts/deploy-production.sh
+```
+
+Panduan lengkap: **[docs/HOSTING.md](docs/HOSTING.md)**  
+Tanpa Terminal cPanel: **[docs/HOSTING_CPANEL_TANPA_TERMINAL.md](docs/HOSTING_CPANEL_TANPA_TERMINAL.md)**
+
+| Persyaratan | |
+|-------------|--|
+| PHP | 8.2+ |
+| MySQL | 8.0+ |
+| Document root | `public/` |
+| SSL | Wajib (`APP_URL` pakai `https://`) |
+
 ## Documentation
 
 | Doc | Description |
@@ -41,7 +66,8 @@ docker compose up -d --build
 | [docs/DATABASE_ERD.md](docs/DATABASE_ERD.md) | Schema & ERD |
 | [docs/API_SPECIFICATION.md](docs/API_SPECIFICATION.md) | REST API v1 |
 | [docs/MVP_ROADMAP.md](docs/MVP_ROADMAP.md) | MVP & phases |
-| [docs/DEPLOYMENT_STRATEGY.md](docs/DEPLOYMENT_STRATEGY.md) | Production deploy |
+| [docs/HOSTING.md](docs/HOSTING.md) | Panduan hosting (cPanel & VPS) |
+| [docs/DEPLOYMENT_STRATEGY.md](docs/DEPLOYMENT_STRATEGY.md) | Arsitektur production |
 | [docs/STITCH_DESIGN.md](docs/STITCH_DESIGN.md) | UI / Stitch guidelines |
 | [docs/BRAND_GUIDELINE.md](docs/BRAND_GUIDELINE.md) | Brand colors & fonts |
 

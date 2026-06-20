@@ -32,7 +32,7 @@ class HomeController extends Controller
                 ->get(),
             'domainOffers' => $this->homePage->domainOffers(),
             'featuredPortfolios' => Portfolio::query()
-                ->with('images')
+                ->with(['category', 'images'])
                 ->where('is_published', true)
                 ->where('is_featured', true)
                 ->orderBy('sort_order')

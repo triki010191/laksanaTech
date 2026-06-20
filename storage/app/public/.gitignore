@@ -1,2 +1,12 @@
 *
 !.gitignore
+!blog/
+!blog/**
+!templates/
+!templates/**
+!portfolios/
+!portfolios/**
+!portfolio/
+!portfolio/**
+!hero/
+!hero/**

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSeo;
+use App\Support\PublicMediaUrl;
 use App\Traits\HasPublicUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,11 @@ class BlogPost extends Model
         return [
             'published_at' => 'datetime',
         ];
+    }
+
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        return PublicMediaUrl::fromPath($this->featured_image);
     }
 
     public function category(): BelongsTo

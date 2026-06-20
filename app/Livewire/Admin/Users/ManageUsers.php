@@ -6,7 +6,6 @@ use App\Enums\RoleName;
 use App\Enums\UserStatus;
 use App\Models\User;
 use App\Services\Auth\RoleRegistryService;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -46,6 +45,7 @@ class ManageUsers extends Component
     {
         $this->resetForm();
         $this->showForm = true;
+        $this->dispatch('scroll-to-form');
     }
 
     public function edit(int $id): void
@@ -56,9 +56,10 @@ class ManageUsers extends Component
         $this->email = $user->email;
         $this->phone = $user->phone ?? '';
         $this->role = $user->roles->first()?->name ?? RoleName::Sales->value;
-        $this->status = $user->status->value ?? UserStatus::Active->value;
+        $this->status = $user->status?->value ?? UserStatus::Active->value;
         $this->password = '';
         $this->showForm = true;
+        $this->dispatch('scroll-to-form');
     }
 
     public function save(RoleRegistryService $roles): void
@@ -89,7 +90,7 @@ class ManageUsers extends Component
         ];
 
         if ($this->password !== '') {
-            $data['password'] = Hash::make($this->password);
+            $data['password'] = $this->password;
         }
 
         if ($this->editingId) {

@@ -17,7 +17,8 @@ class PublicMediaUrl
             $urlPath = '/'.$path;
         } else {
             $filesystemPath = storage_path('app/public/'.$path);
-            $urlPath = '/storage/'.$path;
+            $segment = trim((string) config('filesystems.disks.public.url_segment', 'storage'), '/');
+            $urlPath = '/'.$segment.'/'.$path;
         }
 
         $version = is_file($filesystemPath) ? (string) filemtime($filesystemPath) : (string) time();

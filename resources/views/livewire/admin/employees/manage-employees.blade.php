@@ -1,10 +1,13 @@
-<div>
+<div
+    x-data
+    @scroll-to-form.window="$nextTick(() => document.getElementById('employee-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))"
+>
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
             <h1 class="font-display text-2xl font-bold text-slate-900">Kelola Karyawan</h1>
             <p class="mt-1 text-sm text-slate-500">Profil lengkap · karyawan/freelancer · terhubung ke akun user</p>
         </div>
-        <button wire:click="create" class="admin-btn admin-btn--primary inline-flex rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white">+ Tambah Karyawan</button>
+        <button type="button" wire:click="create" class="admin-btn admin-btn--primary inline-flex rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white">+ Tambah Karyawan</button>
     </div>
 
     <div class="mt-4 flex flex-wrap gap-2">
@@ -23,7 +26,7 @@
     </div>
 
     @if($showForm)
-        <form wire:submit="save" class="admin-form admin-panel mt-6 space-y-6">
+        <form id="employee-form" wire:submit="save" class="admin-form admin-panel mt-6 scroll-mt-6 space-y-6 ring-2 ring-brand-primary/30">
             <h2 class="admin-form-section__title">{{ $editingUserId ? 'Edit Karyawan' : 'Karyawan Baru' }}</h2>
 
             <div class="admin-form-section space-y-4">
@@ -148,7 +151,7 @@
                 @if($p?->job_title)<p class="mt-2 text-sm font-medium text-slate-700">{{ $p->job_title }}</p>@endif
                 @if($p?->bio)<p class="mt-1 line-clamp-2 text-xs text-slate-500">{{ $p->bio }}</p>@endif
                 <div class="mt-4 flex gap-2">
-                    <button wire:click="edit({{ $employee->id }})" class="admin-btn admin-btn--primary admin-btn--sm inline-flex rounded-lg bg-brand-primary px-3 py-1.5 text-xs font-semibold text-white">Edit</button>
+                    <button type="button" wire:click="edit({{ $employee->id }})" wire:loading.attr="disabled" class="admin-btn admin-btn--primary admin-btn--sm inline-flex rounded-lg bg-brand-primary px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">Edit</button>
                     @if($employee->id !== auth()->id())
                         <button wire:click="delete({{ $employee->id }})" wire:confirm="Hapus karyawan & akun user?" class="admin-btn admin-btn--danger admin-btn--sm inline-flex rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white">Hapus</button>
                     @endif

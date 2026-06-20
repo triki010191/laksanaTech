@@ -83,6 +83,7 @@ class ManageEmployees extends Component
     {
         $this->resetForm();
         $this->showForm = true;
+        $this->dispatch('scroll-to-form');
     }
 
     public function edit(int $userId): void
@@ -107,6 +108,7 @@ class ManageEmployees extends Component
         $this->employee_code = $profile?->employee_code ?? '';
         $this->password = '';
         $this->showForm = true;
+        $this->dispatch('scroll-to-form');
     }
 
     public function save(EmployeeProfileService $service, RoleRegistryService $roles): void

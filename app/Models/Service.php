@@ -75,6 +75,10 @@ class Service extends Model
             return $this->demo_url;
         }
 
+        if ($this->template?->live_demo_url) {
+            return $this->template->live_demo_url;
+        }
+
         if ($this->template?->demo_url) {
             return $this->template->demo_url;
         }

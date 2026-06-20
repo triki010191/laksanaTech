@@ -1,5 +1,7 @@
 # Production Deployment Strategy
 
+> **Panduan praktis hosting (cPanel / VPS):** lihat [HOSTING.md](HOSTING.md)
+
 ## Target Infrastructure
 
 ```

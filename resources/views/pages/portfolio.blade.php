@@ -8,11 +8,9 @@
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             @foreach($portfolios as $item)
                 <article class="flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                    @if($item->cover_image_url)
-                        <img src="{{ $item->cover_image_url }}" alt="{{ $item->title }}" class="h-44 w-full object-cover object-top">
-                    @else
-                        <div class="h-44 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10"></div>
-                    @endif
+                    <div class="h-44 overflow-hidden">
+                        <x-portfolio-preview :portfolio="$item" class="h-44 w-full" />
+                    </div>
                     <div class="flex flex-1 flex-col p-6">
                         <div class="mb-3 flex items-center justify-between gap-2">
                             <span class="rounded-full bg-brand-primary/10 px-2.5 py-0.5 text-caption font-semibold text-brand-primary">
@@ -23,7 +21,14 @@
                             @endif
                         </div>
                         <p class="text-meta">{{ $item->client_name }}</p>
-                        <h2 class="text-card-title mt-1">{{ $item->title }}</h2>
+                        @if($item->live_demo_link)
+                            <a href="{{ $item->live_demo_link }}" target="_blank" rel="noopener noreferrer"
+                               class="text-card-title mt-1 transition hover:text-brand-primary">
+                                {{ $item->title }}
+                            </a>
+                        @else
+                            <h2 class="text-card-title mt-1">{{ $item->title }}</h2>
+                        @endif
                         <p class="text-card-body mt-2 flex-1 line-clamp-3">{{ $item->short_description }}</p>
                         @if($item->technologies)
                             <div class="mt-3 flex flex-wrap gap-1.5">
@@ -31,6 +36,12 @@
                                     <span class="rounded-md bg-slate-100 px-2 py-0.5 text-caption">{{ $tech }}</span>
                                 @endforeach
                             </div>
+                        @endif
+                        @if($item->live_demo_link)
+                            <a href="{{ $item->live_demo_link }}" target="_blank" rel="noopener noreferrer"
+                               class="text-btn mt-4 inline-flex items-center gap-1.5 text-brand-primary hover:underline">
+                                Lihat Live ↗
+                            </a>
                         @endif
                     </div>
                 </article>

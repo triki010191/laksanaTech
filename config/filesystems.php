@@ -41,7 +41,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url_segment' => env('PUBLIC_UPLOAD_PATH', 'storage'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/'.trim(env('PUBLIC_UPLOAD_PATH', 'storage'), '/'),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -74,7 +75,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        public_path(trim(env('PUBLIC_UPLOAD_PATH', 'storage'), '/')) => storage_path('app/public'),
     ],
 
 ];

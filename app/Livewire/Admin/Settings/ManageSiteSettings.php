@@ -92,7 +92,7 @@ class ManageSiteSettings extends Component
         $this->design_sidebar_text = $s['design_sidebar_text'] ?? '';
 
         if (! empty($s['brand_logo_path'])) {
-            $this->current_logo_url = asset('storage/'.$s['brand_logo_path']);
+            $this->current_logo_url = upload_url($s['brand_logo_path']);
         }
     }
 
@@ -138,7 +138,7 @@ class ManageSiteSettings extends Component
                 Storage::disk('public')->delete($old);
             }
             $data['brand_logo_path'] = $path;
-            $this->current_logo_url = asset('storage/'.$path);
+            $this->current_logo_url = upload_url($path);
         }
 
         $settings->setMany($data);

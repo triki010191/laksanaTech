@@ -98,7 +98,13 @@ class ManagePortfolios extends Component
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:portfolios,slug,'.($this->editingId ?? 'NULL').',id',
             'client_name' => 'required|string|max:255',
-            'project_url' => 'nullable|url|max:500',
+            'project_url' => [
+                PortfolioCategory::query()->where('id', $this->portfolio_category_id)->where('slug', 'website')->exists()
+                    ? 'required'
+                    : 'nullable',
+                'url',
+                'max:500',
+            ],
             'short_description' => 'nullable|string|max:1000',
             'case_study' => 'nullable|string',
             'technologies' => 'nullable|string|max:500',
@@ -198,9 +204,12 @@ class ManagePortfolios extends Component
             });
         }
 
+        $websiteCategoryId = PortfolioCategory::query()->where('slug', 'website')->value('id');
+
         return view('livewire.admin.portfolios.manage-portfolios', [
             'portfolios' => $query->paginate(12),
             'categories' => PortfolioCategory::query()->orderBy('sort_order')->get(),
+            'websiteCategoryId' => $websiteCategoryId,
             'editingImages' => $this->editingId
                 ? PortfolioImage::query()->where('portfolio_id', $this->editingId)->orderBy('sort_order')->get()
                 : collect(),

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\ScreenshotController;
 use App\Http\Controllers\Web\SeoController;
 use App\Http\Controllers\Web\TemplateController;
 use App\Livewire\Checkout\WebsiteCheckout;
@@ -20,6 +21,7 @@ Route::redirect('/faq', '/pertanyaan');
 Route::get('/kontak', [HomeController::class, 'contact'])->name('contact');
 
 Route::get('/cari-design', [TemplateController::class, 'index'])->name('designs');
+Route::get('/screenshot', ScreenshotController::class)->name('screenshot');
 Route::redirect('/template', '/cari-design');
 Route::get('/template/{slug}', [TemplateController::class, 'show'])->name('templates.show');
 Route::get('/pesan-website', WebsiteCheckout::class)->name('checkout');

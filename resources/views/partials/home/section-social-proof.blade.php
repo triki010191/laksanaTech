@@ -27,14 +27,19 @@
                 <div class="grid gap-6 md:grid-cols-2">
                     @foreach($featuredPortfolios->take(2) as $item)
                         <article class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-                            @if($item->cover_image_url)
-                                <img src="{{ $item->cover_image_url }}" alt="{{ $item->title }}" class="h-48 w-full object-cover object-top">
-                            @else
-                                <div class="h-48 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10"></div>
-                            @endif
+                            <div class="h-48 overflow-hidden">
+                                <x-portfolio-preview :portfolio="$item" class="h-48 w-full" />
+                            </div>
                             <div class="p-6">
                                 <p class="text-meta text-brand-primary">{{ $item->client_name }}</p>
-                                <h4 class="text-card-title mt-2">{{ $item->title }}</h4>
+                                @if($item->live_demo_link)
+                                    <a href="{{ $item->live_demo_link }}" target="_blank" rel="noopener noreferrer"
+                                       class="text-card-title mt-2 block transition hover:text-brand-primary">
+                                        {{ $item->title }}
+                                    </a>
+                                @else
+                                    <h4 class="text-card-title mt-2">{{ $item->title }}</h4>
+                                @endif
                                 <p class="text-card-body mt-2 line-clamp-2">{{ $item->short_description }}</p>
                             </div>
                         </article>
