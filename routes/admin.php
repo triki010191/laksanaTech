@@ -10,6 +10,7 @@ use App\Livewire\Admin\Leads\ManageLeads;
 use App\Livewire\Admin\Orders\ManageOrders;
 use App\Livewire\Admin\Packages\ManagePackages;
 use App\Livewire\Admin\Portfolios\ManagePortfolios;
+use App\Livewire\Admin\Services\ManageServices;
 use App\Livewire\Admin\Settings\ManageIntegrationsSettings;
 use App\Livewire\Admin\Settings\ManagePaymentSettings;
 use App\Livewire\Admin\Settings\ManageSiteSettings;
@@ -32,6 +33,7 @@ Route::middleware(['web', 'auth', 'role:super_admin|admin|sales|transaction_admi
             Route::get('/domain-extensions', ManageDomainExtensions::class)->name('domain-extensions.index');
             Route::get('/hero-slides', ManageHeroSlides::class)->name('hero-slides.index');
             Route::get('/portfolios', ManagePortfolios::class)->name('portfolios.index');
+            Route::get('/services', ManageServices::class)->name('services.index');
             Route::get('/blog', ManagePosts::class)->name('blog.index');
             Route::get('/faqs', ManageFaqs::class)->name('faqs.index');
         });

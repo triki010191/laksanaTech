@@ -57,5 +57,13 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\View::composer('*', function ($view): void {
             $view->with('site', app(\App\Services\Settings\SiteSettingsService::class)->all());
         });
+
+        \Illuminate\Support\Facades\View::composer('partials.navbar-services-menu', function ($view): void {
+            $view->with('navServices', \App\Models\Service::query()
+                ->with('category')
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get());
+        });
     }
 }

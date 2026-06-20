@@ -26,8 +26,9 @@ class HomeController extends Controller
         return view('pages.home', [
             'featuredTemplates' => $this->homePage->featuredTemplates(3),
             'services' => Service::query()
+                ->with('category')
                 ->where('is_active', true)
-                ->whereIn('slug', collect(config('laksana.layanan_menu.bidang.items', []))->pluck('slug'))
+                ->where('is_featured', true)
                 ->orderBy('sort_order')
                 ->get(),
             'domainOffers' => $this->homePage->domainOffers(),
@@ -52,15 +53,12 @@ class HomeController extends Controller
 
     public function services(): View
     {
-        $slugs = collect(config('laksana.layanan_menu.bidang.items', []))->pluck('slug');
-
         return view('pages.services', [
             'services' => Service::query()
+                ->with('category')
                 ->where('is_active', true)
-                ->whereIn('slug', $slugs)
-                ->get()
-                ->sortBy(fn (Service $service) => $slugs->search($service->slug))
-                ->values(),
+                ->orderBy('sort_order')
+                ->get(),
             'pageTitle' => 'Layanan — '.config('laksana.brand.name'),
         ]);
     }

@@ -24,6 +24,7 @@ class Service extends Model
         'slug',
         'type',
         'short_description',
+        'audience',
         'description',
         'preview_image',
         'demo_url',

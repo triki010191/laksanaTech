@@ -1,6 +1,5 @@
 @php
     $s = config('laksana.home.section_02');
-    $bidang = config('laksana.layanan_menu.bidang.items', []);
 @endphp
 
 <section class="home-section home-section--muted py-20">
@@ -12,10 +11,9 @@
         ])
 
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            @foreach($bidang as $index => $item)
+            @foreach($services as $index => $service)
                 @include('pages.services._line-card', [
-                    'item' => $item,
-                    'service' => $services->firstWhere('slug', $item['slug']),
+                    'service' => $service,
                     'active' => $index === 1,
                 ])
             @endforeach

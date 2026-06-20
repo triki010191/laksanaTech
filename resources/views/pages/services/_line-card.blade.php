@@ -1,23 +1,19 @@
-@props(['item', 'service' => null, 'active' => false])
+@props(['service', 'active' => false])
 
-@php
-    $url = $service ? route('services.show', $service->slug) : route('contact');
-@endphp
-
-<a href="{{ $url }}"
+<a href="{{ route('services.show', $service->slug) }}"
    @class(['service-line-card group h-full', 'service-line-card--active' => $active])>
-    @if($service?->cover_image_url)
-        <img src="{{ $service->cover_image_url }}" alt="{{ $item['title'] }}" class="service-line-card__cover" loading="lazy" decoding="async">
+    @if($service->cover_image_url)
+        <img src="{{ $service->cover_image_url }}" alt="{{ $service->name }}" class="service-line-card__cover" loading="lazy" decoding="async">
     @endif
     <div class="service-line-card__body">
         <span class="service-line-card__icon">
-            @include('partials.icons.service-icon', ['name' => $item['icon'] ?? 'app'])
+            @include('partials.icons.service-icon', ['name' => $service->category?->icon ?? 'app'])
         </span>
-        @if(!empty($item['audience']))
-            <p class="service-line-card__audience">{{ $item['audience'] }}</p>
+        @if($service->audience)
+            <p class="service-line-card__audience">{{ $service->audience }}</p>
         @endif
-        <h3 class="service-line-card__title">{{ $item['title'] }}</h3>
-        <p class="service-line-card__desc">{{ $service?->short_description ?? $item['summary'] ?? '' }}</p>
+        <h3 class="service-line-card__title">{{ $service->name }}</h3>
+        <p class="service-line-card__desc">{{ $service->short_description }}</p>
         <div class="service-line-card__footer">
             <span class="service-line-card__link-label">Lihat layanan</span>
             <span class="service-line-card__arrow">

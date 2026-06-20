@@ -105,6 +105,7 @@ class LaksanaContentSeeder extends Seeder
                     'name' => $item['title'],
                     'type' => $meta['type'],
                     'short_description' => $item['summary'] ?? 'Layanan profesional '.$item['title'].' oleh CV. Laksana Solution.',
+                    'audience' => $item['audience'] ?? null,
                     'starting_price' => $meta['starting_price'],
                     'is_featured' => true,
                     'is_active' => true,

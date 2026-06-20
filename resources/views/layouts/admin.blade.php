@@ -46,6 +46,7 @@
                 @hasanyrole('super_admin|admin|sales')
                 <p class="admin-sidebar__section px-3 pt-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Konten</p>
                 <x-admin.nav-link :href="route('admin.hero-slides.index')" :active="request()->routeIs('admin.hero-slides.*')">Hero Slider</x-admin.nav-link>
+                <x-admin.nav-link :href="route('admin.services.index')" :active="request()->routeIs('admin.services.*')">Bidang Layanan</x-admin.nav-link>
                 <x-admin.nav-link :href="route('admin.portfolios.index')" :active="request()->routeIs('admin.portfolios.*')">Portofolio</x-admin.nav-link>
                 <x-admin.nav-link :href="route('admin.blog.index')" :active="request()->routeIs('admin.blog.*')">Blog</x-admin.nav-link>
                 <x-admin.nav-link :href="route('admin.faqs.index')" :active="request()->routeIs('admin.faqs.*')">Pertanyaan</x-admin.nav-link>

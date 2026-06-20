@@ -6,10 +6,9 @@
 
     <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            @foreach(config('laksana.layanan_menu.bidang.items', []) as $index => $item)
+            @foreach($services as $index => $service)
                 @include('pages.services._line-card', [
-                    'item' => $item,
-                    'service' => $services->firstWhere('slug', $item['slug']),
+                    'service' => $service,
                     'active' => $index === 1,
                 ])
             @endforeach
