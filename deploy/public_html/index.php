@@ -29,4 +29,11 @@ require $laravelRoot.'/vendor/autoload.php';
 /** @var Application $app */
 $app = require_once $laravelRoot.'/bootstrap/app.php';
 
+$app->usePublicPath(__DIR__);
+
+// Pastikan file hot dari dev server lokal tidak merusak Vite di production
+if (is_file(__DIR__.'/hot')) {
+    @unlink(__DIR__.'/hot');
+}
+
 $app->handleRequest(Request::capture());

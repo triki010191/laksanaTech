@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(\App\Services\Settings\SiteSettingsService::class);
 
-        if ($publicPath = env('APP_PUBLIC_PATH')) {
+        if ($publicPath = (config('app.public_path') ?: env('APP_PUBLIC_PATH'))) {
             $this->app->usePublicPath($publicPath);
         }
     }

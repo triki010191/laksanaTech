@@ -22,6 +22,24 @@ ini_set('display_errors', '1');
 error_reporting(E_ALL);
 set_time_limit(180);
 
+function copyDirRecursively(string $src, string $dst): void
+{
+    @mkdir($dst, 0755, true);
+    $items = @scandir($src) ?: [];
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+        $from = $src.'/'.$item;
+        $to = $dst.'/'.$item;
+        if (is_dir($from)) {
+            copyDirRecursively($from, $to);
+        } else {
+            @copy($from, $to);
+        }
+    }
+}
+
 $webRoot = __DIR__;
 $basePath = null;
 $scan = [];
@@ -49,29 +67,7 @@ if ($basePath === null) {
     foreach (glob($basePath.'/bootstrap/cache/*.php') ?: [] as $f) {
         @unlink($f);
     }
-    foreach (glob($basePath.'/storage/framework/views/*.php') ?: [] as $f) {
-        @unlink($f);
-    }
-    $steps[] = ['ok', 'Cache lama', 'bootstrap/cache & views dibersihkan'];
-
-    // Wajib: load helpers.php di index.php (upload_url di view)
-    $helpersFile = $basePath.'/app/Support/helpers.php';
-    if (! is_file($helpersFile)) {
-        $steps[] = ['warn', 'helpers.php', 'Belum ada — upload app/Support/helpers.php'];
-    }
-    $indexFile = $webRoot.'/index.php';
-    if (is_file($indexFile)) {
-        $index = file_get_contents($indexFile);
-        $needle = "require __DIR__.'/vendor/autoload.php';";
-        $patch = "require __DIR__.'/vendor/autoload.php';\n\nif (is_file(__DIR__.'/app/Support/helpers.php')) {\n    require __DIR__.'/app/Support/helpers.php';\n}";
-        if (! str_contains($index, 'app/Support/helpers.php')) {
-            $index = str_replace($needle, $patch, $index);
-            file_put_contents($indexFile, $index);
-            $steps[] = ['ok', 'index.php', 'helpers.php ditambahkan'];
-        } else {
-            $steps[] = ['ok', 'index.php', 'Sudah load helpers'];
-        }
-    }
+    $steps[] = ['ok', 'Cache lama', 'bootstrap/cache dibersihkan'];
 
     if (! is_file($basePath.'/.env')) {
         $steps[] = ['err', '.env', 'Belum ada di '.$basePath.'/.env'];
@@ -111,15 +107,69 @@ if ($basePath === null) {
                 Illuminate\Support\Facades\Artisan::call('config:clear');
                 Illuminate\Support\Facades\Artisan::call('route:clear');
                 Illuminate\Support\Facades\Artisan::call('view:clear');
-                $steps[] = ['ok', 'Cache', 'Config, route, view dibersihkan'];
+                $steps[] = ['ok', 'Cache', 'Cache konfigurasi, rute, dan tampilan dibersihkan'];
             } catch (Throwable $e) {
                 $steps[] = ['err', 'Cache', $e->getMessage()];
             }
 
+            // 1. Hapus file hot jika ada (penyebab Vite error di production)
+            if (is_file($webRoot.'/hot')) {
+                @unlink($webRoot.'/hot');
+                $steps[] = ['ok', 'Hot File', 'File public/hot dihapus (mode dev dinonaktifkan)'];
+            }
+            if (is_file($basePath.'/public/hot')) {
+                @unlink($basePath.'/public/hot');
+            }
+
+            // 2. Sinkronkan folder build jika perlu
+            $srcBuild = is_dir($webRoot.'/build') ? $webRoot.'/build' : (is_dir($basePath.'/public/build') ? $basePath.'/public/build' : null);
+            if ($srcBuild !== null) {
+                $dstBuild = ($srcBuild === $webRoot.'/build') ? $basePath.'/public/build' : $webRoot.'/build';
+                if (! is_dir($dstBuild)) {
+                    copyDirRecursively($srcBuild, $dstBuild);
+                    $steps[] = ['ok', 'Asset Build', 'Folder build disinkronkan ke: '.$dstBuild];
+                } else {
+                    $steps[] = ['ok', 'Asset Build', 'Folder build tersedia di web root dan laksanaTech/public'];
+                }
+            } else {
+                $steps[] = ['err', 'Asset Build', 'Folder build tidak ditemukan! Harap upload folder public/build dari komputer lokal.'];
+            }
+
+            // 3. Pastikan helpers.php termuat di index.php
+            $indexFile = $webRoot.'/index.php';
+            if (is_file($indexFile)) {
+                $content = file_get_contents($indexFile);
+                $changed = false;
+                if (! str_contains($content, 'usePublicPath')) {
+                    $search = '$app->handleRequest';
+                    $replace = "\$app->usePublicPath(__DIR__);\n\n\$app->handleRequest";
+                    if (str_contains($content, $search)) {
+                        $content = str_replace($search, $replace, $content);
+                        $changed = true;
+                        $steps[] = ['ok', 'index.php', 'Ditambahkan $app->usePublicPath(__DIR__)'];
+                    }
+                }
+                if ($changed) {
+                    file_put_contents($indexFile, $content);
+                }
+            }
+
+            // 4. Uji render halaman beranda
+            try {
+                $rendered = app(\App\Http\Controllers\Web\HomeController::class)->index()->render();
+                $steps[] = ['ok', 'Uji Render Halaman Beranda', 'Berhasil me-render halaman beranda ('.strlen($rendered).' bytes). Error 500 teratasi!'];
+            } catch (Throwable $e) {
+                $steps[] = ['err', 'Uji Render Halaman Beranda Gagal', $e->getMessage().' di '.$e->getFile().':'.$e->getLine()];
+            }
+
+            // 5. Cek log Laravel
             $log = $basePath.'/storage/logs/laravel.log';
             if (is_file($log)) {
-                $lines = array_slice(file($log) ?: [], -15);
-                $steps[] = ['warn', 'laravel.log (15 baris terakhir)', implode('', $lines) ?: '(kosong)'];
+                $lines = array_slice(file($log) ?: [], -20);
+                $logContent = trim(implode('', $lines));
+                if ($logContent !== '') {
+                    $steps[] = ['warn', 'laravel.log (20 baris terakhir)', $logContent];
+                }
             }
         } catch (Throwable $e) {
             $steps[] = ['err', 'Bootstrap gagal', $e->getMessage()];

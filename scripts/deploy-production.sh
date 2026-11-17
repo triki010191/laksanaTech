@@ -32,6 +32,17 @@ else
     echo "WARN: npm tidak ditemukan — pastikan folder public/build/ sudah ada (build di lokal)."
 fi
 
+echo "==> Cleanup hot file (Vite dev marker)"
+rm -f public/hot "$ROOT/../public/hot" "$ROOT/../public_html/hot" "$ROOT/../public_html/public/hot" 2>/dev/null || true
+
+# Sinkronkan build ke web root terpisah jika ada (misal cPanel public_html/public)
+for web_dir in "$ROOT/../public" "$ROOT/../public_html" "$ROOT/../public_html/public"; do
+    if [[ -d "$web_dir" && "$web_dir" != "$ROOT/public" && -f "$web_dir/index.php" ]]; then
+        mkdir -p "$web_dir/build"
+        cp -ru "$ROOT/public/build/"* "$web_dir/build/" 2>/dev/null || true
+    fi
+done
+
 echo "==> Storage symlink"
 php artisan storage:link --force 2>/dev/null || php artisan storage:link || true
 
