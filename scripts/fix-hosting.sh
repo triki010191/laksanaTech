@@ -48,12 +48,17 @@ for idx in "${INDEX_FILES[@]}"; do
     fi
 done
 
-echo "=== 5. Storage Symlink ==="
+echo "=== 5. Sinkronkan Storage & Uploads (LiteSpeed Compatible) ==="
 php artisan storage:link --force 2>/dev/null || true
-if [[ "$WEB_ROOT" != "$ROOT/public" ]]; then
-    mkdir -p "$ROOT/storage/app/public"
-    ln -sfn "$ROOT/storage/app/public" "$WEB_ROOT/storage" 2>/dev/null || cp -ru "$ROOT/storage/app/public" "$WEB_ROOT/storage" 2>/dev/null || true
-fi
+mkdir -p "$ROOT/storage/app/public"
+# LiteSpeed memblokir symlink lintas direktori dengan 403 Forbidden.
+# Buat dan salin file fisik ke $WEB_ROOT/storage dan $WEB_ROOT/uploads agar tidak 403/404:
+for target_dir in "$WEB_ROOT/storage" "$WEB_ROOT/uploads" "$ROOT/public/uploads"; do
+    mkdir -p "$target_dir"
+    if [[ -d "$ROOT/storage/app/public" ]]; then
+        cp -ru "$ROOT/storage/app/public/"* "$target_dir/" 2>/dev/null || cp -r "$ROOT/storage/app/public/"* "$target_dir/" 2>/dev/null || true
+    fi
+done
 
 echo "=== 6. Bersihkan Cache Laravel ==="
 php artisan config:clear
